@@ -7,7 +7,7 @@
 
 # Установка
 
-***.bash** разместить в одном из каталогов переменной /home/vasiliev-s/.local/bin:/home/vasiliev-s/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/share/install/scripts<br/>
+***.bash** разместить в одном из каталогов переменной $PATH<br/>
 ***-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
 
 
@@ -54,4 +54,5 @@ absmsg.bash -e -j "Какой-то заголовок" -- ~/.nanorc ~/.bashrc
 absmsg.bash -el
 echo "Сообщение" | absmsg.bash --sms
 ```
+
 

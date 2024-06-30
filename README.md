@@ -4,20 +4,17 @@
 
 **absmsg.bash** - это скрипт для упрощенной одновременной отправки сообщений по электронной почте, СМС и в системный журнал. Текст сообщения бёрётся из стандартного потока stdin и содержимого файлов - аргументов командной строки. Все неразобранные опции считаются именами файлов, которые последовательно добавляются к итоговому сообщению. Если сообщение вообще не задано, то в сообщение записывается имя текущего пользователя, имя хоста, время и дата, а к теме добавляется подстрока ": timestamp".<br/>
 
+
 # Установка
 
-***.bash** разместить в одном из каталогов переменной $PATH<br/>
+***.bash** разместить в одном из каталогов переменной /home/vasiliev-s/.local/bin:/home/vasiliev-s/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/share/install/scripts<br/>
 ***-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
 
 
 # Использование
 
 ## absipcam.bash
-```absipcam.bash   version 0.1, © 2024 by Sergey Vasiliev aka abs.
-absipcam.bash - это скрипт для контроля ежедневного количества и объёма видеофайлов, поступающих от камер видеонаблюдения. При отклонениях в количестве или объёме генерируются тревожные сообщения (посредством absmsg.bash). Вся информация дублируется в системном журнале.
-
-absipcam.bash comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.  See  the GNU General Public Licence for details.
-
+```
 Использование: absipcam.bash [ОПЦИЯ] ...
 
 Опции:
@@ -29,11 +26,7 @@ absipcam.bash comes with ABSOLUTELY NO WARRANTY. This is free software, and you 
 ```
 
 ## absmsg.bash
-```absmsg.bash   version 0.1, © 2024 by Sergey Vasiliev aka abs.
-absmsg.bash - это скрипт для упрощенной одновременной отправки сообщений по электронной почте, СМС и в системный журнал. Текст сообщения бёрётся из стандартного потока stdin и содержимого файлов - аргументов командной строки. Все неразобранные опции считаются именами файлов, которые последовательно добавляются к итоговому сообщению. Если сообщение вообще не задано, то в сообщение записывается имя текущего пользователя, имя хоста, время и дата, а к теме добавляется подстрока ": timestamp".
-
-absmsg.bash comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions.  See  the GNU General Public Licence for details.
-
+```
 Использование: absmsg.bash [ОПЦИЯ] [--] [FILE1] [FILE2] ...
 
 Опции:

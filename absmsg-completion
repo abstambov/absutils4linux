@@ -1,0 +1,44 @@
+# absmsg.bash completion
+
+function _absmsg {
+
+	# Стандартный блок для completion функций bash (используется встроенная недокументированная функция _init_completion - см. /usr/share/bash-completion/bash_completion)
+	local cur prev words cword
+	_init_completion || return
+
+	case "$prev" in
+		--help | -h)
+			# Прерываемся, если пользователь уже ввёл опцию помощи или опцию задания темы
+			return
+			;;
+		--subject | -j)
+			# Прерываемся, если пользователь уже ввёл опцию помощи или опцию задания темы
+			COMPREPLY=( \"\" )
+			return
+			;;
+		--attach | -a)
+			# Режим выбора вложения (файла)
+			_filedir
+			return
+			;;
+		--priority | -p)
+			# Режим ввода имён facility.level (см. 'man logger')
+			local facility_level=$(echo {auth.,authpriv.,cron.,daemon.,ftp.,lpr.,mail.,news.,syslog.,user.,uucp.,local0.,local1.,local2.,local3.,local4.,local5.,local6.,local7.}{emerg,alert,crit,err,warning,notice,info,debug})
+			COMPREPLY=( $(compgen -W "$facility_level" -- "$cur" ) )
+			return
+			;;
+	esac
+
+	if [[ -z "$cur" || "$cur" == -* ]]; then
+		# Если пользователь начал вводить опцию, то выводим ему список опций (парсится автоматически встроенной недокументированной функцией _parse_help - см. /usr/share/bash-completion/bash_completion)
+		COMPREPLY=( $(compgen -W '$(_parse_help ${1} --help)' -- "$cur") )
+		return
+	fi
+
+	if [[ -n $(ls -d "$cur"*) ]]; then
+		# Если вводимое слово - часть имени файла или директории
+		_filedir
+	fi
+
+} &&
+	complete -F _absmsg absmsg.bash

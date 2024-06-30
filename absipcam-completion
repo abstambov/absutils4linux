@@ -1,0 +1,23 @@
+# absipcam.bash completion
+
+function _absipcam {
+
+	# Стандартный блок для completion функций bash (используется встроенная недокументированная функция _init_completion - см. /usr/share/bash-completion/bash_completion)
+	local cur prev words cword
+	_init_completion || return
+
+	case "$prev" in
+		--help | -h)
+			# Прерываемся, если пользователь уже ввёл опцию помощи или опцию задания темы
+			return
+			;;
+	esac
+
+	if [[ -z "$cur" || "$cur" == -* ]]; then
+		# Если пользователь начал вводить опцию, то выводим ему список опций (парсится автоматически встроенной недокументированной функцией _parse_help - см. /usr/share/bash-completion/bash_completion)
+		COMPREPLY=( $(compgen -W '$(_parse_help ${1} --help)' -- "$cur") )
+		return
+	fi
+
+} &&
+	complete -F _absipcam absipcam.bash

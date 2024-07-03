@@ -16,7 +16,7 @@ function _absmsg {
 			COMPREPLY=( \"\" )
 			return
 			;;
-		--attach | -a)
+		--attach | -a | --credentials | -c)
 			# Режим выбора вложения (файла)
 			_filedir
 			return

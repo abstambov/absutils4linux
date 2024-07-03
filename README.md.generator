@@ -83,10 +83,9 @@ function readme_generator {
     cat <<EOF
 # Установка
 
-**sources/*.bash** разместить в одном из каталогов переменной \$PATH<br/>
-**sources/*-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
-
-
+1. **sources/*.bash** разместить в одном из каталогов переменной \$PATH<br/>
+2. **sources/*-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
+3. Взяв за основу **sources/.absmsg-credentials.EXAMPLE**, нужно создать свой файл с приватными данными для скрипта absmsg.bash. Данные используются для отправки сообщений по электронной почте и СМС. Без аргумента --credentials скрипт absmsg.bash обращается к файлу ~/.absmsg-credentials Нужно учитывать это при запуске скриптов от sudo: или разместить этот файл в домашнем каталоге root, или указать во всех скриптах, которые используют absmsg.bash, другое расположение этого файла.
 EOF
 
     # Генерируем раздел Использование
@@ -123,10 +122,13 @@ function main {
 	# -----------------------------------------------------------------------------
 	function ctrl_c {
 		
-		# Останавливаем спиннер
+		# Останавливаем спиннер и чистим экран после него и press_any_key_to_continue
 		kill $spinner_pid && wait $spinner_pid 2>/dev/null
-		printf "\r\033[K\n"
+		tput cr 	# carriage_return (cr/) cr  carriage return (P*) (P*)
+		tput cuu1	# cursor_up (cuu1/up)  up one line
+		tput el		# clr_eol (el/ce) clear to end of line (P)
 
+		echo ""
 		echo "Отменено."
 
 		exit 0
@@ -152,10 +154,14 @@ function main {
 	press_any_key_to_continue
 	readme_generator >README.md
 
-	# Останавливаем спиннер
+	# Останавливаем спиннер и чистим экран после него и press_any_key_to_continue
 	kill $spinner_pid && wait $spinner_pid 2>/dev/null
-	printf "\r\033[K\n"
+	tput cr 	# carriage_return (cr/) cr  carriage return (P*) (P*)
+	tput cuu1	# cursor_up (cuu1/up)  up one line
+	tput cuu1	# cursor_up (cuu1/up)  up one line
+	tput el		# clr_eol (el/ce) clear to end of line (P)
 
+	echo ""
 	echo "Готово."
 
     return 0

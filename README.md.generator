@@ -2,10 +2,9 @@
 
 
 
-# README.md.generator - скрипт для автоматической генерации README.md в репозитарии.
-# Скрипт создан искючительно для обслуживания текущего репозитария!
-# Использование: запустить скрипт из корневого каталога репозитария.
-# Внимание! Файл README.md будет перезаписан без предупреждения.
+# README.md.generator - скрипт для автоматической генерации README.md в текущем каталоге.
+# Использование: корневой каталог репозитария установить текущим, запустить скрипт.
+# Внимание! Скрипт создан искючительно для обслуживания текущего репозитария!
 
 
 
@@ -75,7 +74,7 @@ function readme_generator {
     # Генерируем раздел Описание
     echo "# Описание"
     echo ""
-    for i in $(git ls-files *.bash); do
+    for i in $(git ls-files sources/*.bash); do
         sed -nE '2 s/^(abs.*\.bash)(\ -\ .*)$/**\1**\2<br\/>\n/p' <(./"$i" --help)
     done
     echo ""
@@ -84,8 +83,8 @@ function readme_generator {
     cat <<EOF
 # Установка
 
-***.bash** разместить в одном из каталогов переменной \$PATH<br/>
-***-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
+**sources/*.bash** разместить в одном из каталогов переменной \$PATH<br/>
+**sources/*-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
 
 
 EOF
@@ -93,7 +92,7 @@ EOF
     # Генерируем раздел Использование
     echo "# Использование"
     echo ""
-    for i in $(git ls-files *.bash); do
+    for i in $(git ls-files sources/*.bash); do
         echo "## $i"
         echo '```'
         tail -n +6 <(./"$i" --help)
@@ -125,20 +124,26 @@ function main {
 	function ctrl_c {
 		
 		# Останавливаем спиннер
-		kill $spinner_pid
-		wait $spinner_pid 2>/dev/null
-		printf "\b"
+		kill $spinner_pid && wait $spinner_pid 2>/dev/null
+		printf "\r\033[K\n"
 
 		echo "Отменено."
 
 		exit 0
 	} # ctrl_c
 
-	echo "README.md будет переписан (Ctrl+C - отмена)."
+	# -----------------------------------------------------------------------------
+
+	if [[ -w README.md ]]; then
+		echo -n "README.md существует в ${PWD} и будет переписан! "
+	else
+		echo -n "Будет сгенерирован новый README.md в ${PWD}. "
+	fi
+	echo "Или нажмите Ctrl+C для отмены."
 
 	# Запускаем спиннер
 	spinner &
-	local spinner_pid=$!
+	spinner_pid=$!
 
 	# Устанавливаем функцию-обработчик Ctrl+C (сигнал SIGINT)
 	trap ctrl_c SIGINT
@@ -148,9 +153,8 @@ function main {
 	readme_generator >README.md
 
 	# Останавливаем спиннер
-	kill $spinner_pid
-	wait $spinner_pid 2>/dev/null
-	printf "\b"
+	kill $spinner_pid && wait $spinner_pid 2>/dev/null
+	printf "\r\033[K\n"
 
 	echo "Готово."
 

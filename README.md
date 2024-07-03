@@ -7,13 +7,13 @@
 
 # Установка
 
-***.bash** разместить в одном из каталогов переменной $PATH<br/>
-***-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
+**sources/*.bash** разместить в одном из каталогов переменной $PATH<br/>
+**sources/*-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
 
 
 # Использование
 
-## absipcam.bash
+## sources/absipcam.bash
 ```
 Использование: absipcam.bash [ОПЦИЯ] ...
 
@@ -25,7 +25,7 @@
 -h, --help          показывает эту подсказку
 ```
 
-## absmsg.bash
+## sources/absmsg.bash
 ```
 Использование: absmsg.bash [ОПЦИЯ] [--] [FILE1] [FILE2] ...
 

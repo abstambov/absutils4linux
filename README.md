@@ -56,3 +56,10 @@ echo "Сообщение" | absmsg.bash --sms
 ```
 
 
+<table style="width: 100%; border-collapse: collapse; height: 18px;">
+<tbody>
+<tr style="background-color: black;">
+<td style="width: 100%; text-align: right; height: 18px;"><span style="color: white;">&copy; Sergey Vasiliev, 2024</span></td>
+</tr>
+</tbody>
+</table>

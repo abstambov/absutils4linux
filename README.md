@@ -7,7 +7,7 @@
 
 # Установка
 
-0. **sources/*.bash** разместить в одном из каталогов переменной $PATH<br/>
+1. **sources/*.bash** разместить в одном из каталогов переменной $PATH<br/>
 0. **sources/*-completion** - файлы автоматических дополнений соответствующих скриптов bash - разместить в /etc/bash_completion.d/ (работает в Fedora 40)<br/>
 0. Взяв за основу **sources/.absmsg-credentials.EXAMPLE**, нужно создать свой файл с приватными данными для скрипта absmsg.bash. Данные используются для отправки сообщений по электронной почте и СМС. Без аргумента --credentials скрипт absmsg.bash обращается к файлу ~/.absmsg-credentials Нужно учитывать это при запуске скриптов от sudo: или разместить этот файл в домашнем каталоге root, или указать во всех скриптах, которые используют absmsg.bash, другое расположение этого файла.
 # Использование
@@ -57,7 +57,11 @@ echo "Сообщение" | absmsg.bash --sms
 ```
 
 
+<br/>
+<br/>
+<br/>
+
 ---
-© Sergey Vasiliev, 2024<br/>
+© 2024 Sergey Vasiliev<br/>
 - <a href="mailto:vasiliev.s@komdiv.org" target="_blank">vasiliev.s@komdiv.org</a><br/>
 - <a href="mailto:abs.tambov@gmail.com" target="_blank">abs.tambov@gmail.com</a><br/>

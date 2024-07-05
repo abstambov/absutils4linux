@@ -8,11 +8,12 @@
 # Использование: absipcam.bash [ОПЦИЯ] ...
 # 
 # Опции:
-# -a, --only-alarm    выводить информацию только в случае проблем с количеством или объёмом видеофайлов
-# -e, --email         отправить уведомление по электронной почте
-# -s, --sms           при наличии тревожных сообщений отправить уведомление по СМС
-# -q, --quiet         не выводить информацию на экран
-# -h, --help          показывает эту подсказку
+# -a, --only-alarm                 выводить информацию только в случае проблем с количеством или объёмом видеофайлов
+# -e, --email                      отправить уведомление по электронной почте
+# -s, --sms                        при наличии тревожных сообщений отправить уведомление по СМС
+# -q, --quiet                      не выводить информацию на экран
+# -c, --credentials "Имя файла"    путь к файлу с приватными данными для скрипта absmsg.bash; по умолчанию - ~/.absmsg-credentials
+# -h, --help                       показывает эту подсказку
 
 
 
@@ -30,7 +31,7 @@ declare -r path_to_videos="/home/vasiliev-s/.камеры/video"
 declare -a -r ipcam_names=( IPBUH1Y IPBUH2V IPRSC_CH1Y IPRSC_CH2V IPRSC_TE1Y IPRSC_TE2V IPSK1Y IPSK2V )
 
 # Настройки тревоги
-declare -i -r min_total_size=1900		# Минимальный суммарный размер видеофайлов (в MiB) за текущий день по одной камере
+declare -i -r min_total_size=1800		# Минимальный суммарный размер видеофайлов (в MiB) за текущий день по одной камере
 declare -i -r min_total_count=96		# Минимальное число видеофайлов за текущий день по одной камере (4 видео в час)
 declare -i -r max_delta_of_size=-20		# Максимально допустимое отклонение в меньшую сторону от среднего в процентах за неделю для суммарного размера    видеофайлов
 declare -i -r max_delta_of_count=-20	# Максимально допустимое отклонение в меньшую сторону от среднего в процентах за неделю для суммарного количества видеофайлов
@@ -151,12 +152,14 @@ function main {
 
 	# 3. Парсинг командной строки
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	local -A opt
+	local -A opt=(
+		[credentials]=~/.absmsg-credentials
+	)
 
 	# В $temp помещаем обработанную строку с аргументами при вызове скрипта.
 	# Известные аргументы (до аргумента "--" ) будут помещены в начало строки, остальные - после.
 	local temp
-	temp=$(getopt --options 'aehsq' --longoptions 'only-alarm,email,help,sms,quiet' --name "${__this[filename]}" -- "$@")
+	temp=$(getopt --options 'ac:ehsq' --longoptions 'only-alarm,credentials:,email,help,sms,quiet' --name "${__this[filename]}" -- "$@")
 	if [[ $? -ne 0 ]]; then
 		# 102 - ошибка функции getopt при обработке аргументов функции main
 		echo "Ошибка функции getopt при обработке аргументов функции main"
@@ -174,6 +177,11 @@ function main {
 			'-a'|'--only-alarm')
 				opt[only_alarm]=true
 				shift
+				continue
+			;;
+			'-c'|'--credentials')
+				opt[credentials]="$2"
+				shift 2
 				continue
 			;;
 			'-e'|'--email')
@@ -220,11 +228,12 @@ function main {
 		echo "Использование: ${__this[filename]} [ОПЦИЯ] ..."
 		echo ""
 		echo "Опции:"
-		echo "-a, --only-alarm    выводить информацию только в случае проблем с количеством или объёмом видеофайлов"
-		echo "-e, --email         отправить уведомление по электронной почте"
-		echo "-s, --sms           при наличии тревожных сообщений отправить уведомление по СМС"
-		echo "-q, --quiet         не выводить информацию на экран"
-		echo "-h, --help          показывает эту подсказку"
+		echo "-a, --only-alarm                 выводить информацию только в случае проблем с количеством или объёмом видеофайлов"
+		echo "-e, --email                      отправить уведомление по электронной почте"
+		echo "-s, --sms                        при наличии тревожных сообщений отправить уведомление по СМС"
+		echo "-q, --quiet                      не выводить информацию на экран"
+		echo "-c, --credentials \"Имя файла\"    путь к файлу с приватными данными для скрипта absmsg.bash; по умолчанию - ~/.absmsg-credentials"
+		echo "-h, --help                       показывает эту подсказку"
 
 		# Была ошибка в аргументах командной строки
 		if [[ $# -ne 0 ]]; then
@@ -392,7 +401,7 @@ function main {
 				# Проблема с камерой была вчера и наблюдается сегодня
 				alarm[type]="error"
 				alarm[status]=": ТРЕБУЕТ ВНИМАНИЯ! ПРОБЛЕМЫ С ЗАПИСЬЮ ВИДЕО ОТ КАМЕРЫ!"
-				alarm[ipcams]+=" (не работает)"
+				alarm[ipcams]+=" (!)"
 			else
 				# Проблема с камерой наблюдается только сегодня, вчера всё было хорошо
 				[[ "${alarm[type]}" != "error" ]] && alarm[type]="warning"
@@ -426,8 +435,8 @@ function main {
 
 	# Вывод на экран, сообщения на электронную почту и СМС, запись в системный журнал
 	[[ -z "${opt[quiet]}" ]] && printf "%s\n" "${message[@]}"
-	[[ -n "${opt[email]}" && ( "${alarm[type]}" != "info" || -z "${opt[only_alarm]}" ) ]] && printf "%s\n" "${message[@]}" | "${__this[path]}/absmsg.bash" --email --subject "${alarm[ipcams]}"
-	[[ -n "${opt[sms]}"   &&   "${alarm[type]}" != "info" ]]                              && echo "${alarm[ipcams]}" | "${__this[path]}/absmsg.bash" --sms
+	[[ -n "${opt[email]}" && ( "${alarm[type]}" != "info" || -z "${opt[only_alarm]}" ) ]] && printf "%s\n" "${message[@]}" | "${__this[path]}/absmsg.bash" --credentials "${opt[credentials]}" --email --subject "${alarm[ipcams]}"
+	[[ -n "${opt[sms]}"   &&   "${alarm[type]}" != "info" ]]                              && echo "${alarm[ipcams]}" | "${__this[path]}/absmsg.bash" --credentials "${opt[credentials]}" --sms
 
 	# Фиксируем информацию о камерах в системный журнал
 	printf "%s\n%s\n" "--------------------" "${message[@]}" | logger -t ""${__this[filename]}"" --priority "user.${alarm[type]}" --

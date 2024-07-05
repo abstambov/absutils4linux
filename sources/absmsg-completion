@@ -17,7 +17,7 @@ function _absmsg {
 			return
 			;;
 		--attach | -a | --credentials | -c)
-			# Режим выбора вложения (файла)
+			# Режим выбора файла
 			_filedir
 			return
 			;;

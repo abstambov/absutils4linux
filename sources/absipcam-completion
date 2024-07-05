@@ -11,6 +11,11 @@ function _absipcam {
 			# Прерываемся, если пользователь уже ввёл опцию помощи или опцию задания темы
 			return
 			;;
+		--credentials | -c)
+			# Режим выбора файла
+			_filedir
+			return
+			;;
 	esac
 
 	if [[ -z "$cur" || "$cur" == -* ]]; then
